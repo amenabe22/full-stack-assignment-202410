@@ -10,8 +10,6 @@ COPY package*.json ./
 # Install dependencies
 RUN npm install
 
-RUN npm i ts-node typescript
-
 # Copy the rest of the backend application
 COPY . .
 
@@ -26,4 +24,4 @@ RUN npx prisma generate
 RUN npm run build
 
 # Start the backend server
-CMD ["npm", "run", "start"]
+CMD ["npm", "run", "dev"]
