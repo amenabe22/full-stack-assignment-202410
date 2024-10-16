@@ -4,8 +4,8 @@
 1. Clone repo and open directory
 2. Add .env variables in backend folder and add variables for GEMINI_ENDPOINT=https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent and GEMINI_API_KEY
 3. Run `docker-compose up` in the main directory 
-4. Open frontend app at http://localhost:3000
-5. You can also Access backend APIs at http://localhost:5000
+4. Open frontend app at http://localhost:3344
+5. You can also Access backend APIs at http://localhost:5545
 6. Start chatting with brainstorm bot
 
    
