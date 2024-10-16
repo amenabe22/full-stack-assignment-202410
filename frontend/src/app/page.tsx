@@ -23,7 +23,8 @@ interface Idea {
 export default function Home() {
   const [ideas, setIdeas] = useState<Array<Idea>>([])
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  const ref = useRef(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const ref = useRef<any>(null);
 
   const loadIdeas = async () => {
     // Add the user's message to the chat
