@@ -10,6 +10,8 @@ COPY package*.json ./
 # Install dependencies
 RUN npm install
 
+RUN npm i ts-node typescript
+
 # Copy the rest of the backend application
 COPY . .
 
