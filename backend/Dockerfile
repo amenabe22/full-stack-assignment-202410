@@ -23,6 +23,7 @@ EXPOSE 5000
 
 # Install the correct Prisma query engine for Linux
 RUN npx prisma generate
+RUN npm run build
 
 # Start the backend server
-CMD ["npm", "run", "dev"]
+CMD ["npm", "run", "start"]
