@@ -108,47 +108,46 @@ export const ChatBox = forwardRef(({ }, ref) => {
         setChat([]);
     };
 
-    return (
-        <div className='md:p-5'>
-            <h1 className='text-xl text-red-700 font-semibold'>🤖 Brainstorm with a Chatbot</h1>
+    return (<div className='md:p-5'>
+        <h1 className='text-xl text-red-700 font-semibold'>🤖 Brainstorm with a Chatbot</h1>
 
-            <div style={{ marginBottom: '20px' }} className='pt-5'>
-                <div className='flex md:flex-row flex-col justify-between pt-1 pb-5'>
+        <div style={{ marginBottom: '20px' }} className='pt-5'>
+            <div className='flex md:flex-row flex-col justify-between pt-1 pb-5'>
 
-                    <h3 className='pb-3'>Chat History</h3>
-                    <div className='flex items-center gap-3'
-                    >
-
-                        <button className='flex items-center bg-amber-100 px-2 py-1 border-[#d87708] border rounded-3xl' onClick={() => saveIdea}>
-                            <BookmarkIcon width={16} color='#d87708' />
-                            <span>Save Idea</span>
-                        </button>
-                        <button className='bg-amber-100 px-2 py-1 border-[#d87708] border rounded-3xl' onClick={handleReset}>Reset Conversation</button>
-
-                    </div>
-                </div>
-                <div className='border-[#d87708] border rounded-xl' style={{ height: '600px', overflowY: 'scroll', padding: '10px' }} ref={chatBoxRef}
+                <h3 className='pb-3'>Chat History</h3>
+                <div className='flex items-center gap-3'
                 >
-                    {/* render chat messagea from the loaded history */}
-                    {chat.map(({ message, chatId, isAI }, index) => (
-                        <div id={chatId}
-                            key={index}
-                            className={`mb-2 p-3 rounded-lg max-w-md ${isAI
-                                ? 'text-gray-800 self-start'
-                                : 'bg-red-50 text-gray-800 self-end'
-                                }`}
-                        >
-                            {/* TODO: dangerouslySetInnerHTML will be cleaned before it's passed to frontend so won't cause any security issue */}
-                            <div
-                                className="message"
-                                dangerouslySetInnerHTML={{ __html: formatResponse(message) }}
-                            />
-                        </div>
-                    ))}
+
+                    <button className='flex items-center bg-amber-100 px-2 py-1 border-[#d87708] border rounded-3xl' onClick={() => saveIdea}>
+                        <BookmarkIcon width={16} color='#d87708' />
+                        <span>Save Idea</span>
+                    </button>
+                    <button className='bg-amber-100 px-2 py-1 border-[#d87708] border rounded-3xl' onClick={handleReset}>Reset Conversation</button>
+
                 </div>
             </div>
-            <SendForm onSendMessage={handleSendMessage} />
+            <div className='border-[#d87708] border rounded-xl' style={{ height: '600px', overflowY: 'scroll', padding: '10px' }} ref={chatBoxRef}
+            >
+                {/* render chat messagea from the loaded history */}
+                {chat.map(({ message, chatId, isAI }, index) => (
+                    <div id={chatId}
+                        key={index}
+                        className={`mb-2 p-3 rounded-lg max-w-md ${isAI
+                            ? 'text-gray-800 self-start'
+                            : 'bg-red-50 text-gray-800 self-end'
+                            }`}
+                    >
+                        {/* TODO: dangerouslySetInnerHTML will be cleaned before it's passed to frontend so won't cause any security issue */}
+                        <div
+                            className="message"
+                            dangerouslySetInnerHTML={{ __html: formatResponse(message) }}
+                        />
+                    </div>
+                ))}
+            </div>
         </div>
+        <SendForm onSendMessage={handleSendMessage} />
+    </div>
     );
 });
 

@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, Suspense } from 'react'
 import { Dialog, DialogBackdrop, DialogPanel, TransitionChild } from '@headlessui/react'
 import {
   Bars3Icon,
@@ -177,7 +177,9 @@ export default function Home() {
 
         <main className="py-5 md:py-10 lg:pl-72 bg-amber-50 h-screen">
           <div className="px-4 sm:px-6 lg:px-8">
-            <ChatBox ref={ref} />
+            <Suspense>
+              <ChatBox ref={ref} />
+            </Suspense>
           </div>
         </main>
       </div>
