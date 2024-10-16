@@ -2,7 +2,7 @@
 
 # Steps to run on docker
 1. Clone repo and open directory
-2. Add .env variables in backend folder and add variables for GEMINI_ENDPOINT=https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent and GEMINI_API_KEY
+2. Add .env variables in flask-api folder and add variables for OPENAI_KEY=""
 3. Run `docker-compose up` in the main directory 
 4. Open frontend app at http://localhost:3344
 5. You can also Access backend APIs at http://localhost:5545
