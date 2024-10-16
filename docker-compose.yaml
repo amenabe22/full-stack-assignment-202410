@@ -24,3 +24,4 @@ services:
       - GEMINI_URL=${GEMINI_URL}
     volumes:
       - ./backend:/app
+      - /app/node_modules  # Add this to avoid overwriting node_modules with the mounted volume
