@@ -1,12 +1,12 @@
-# Works using Gemini 1.5-flash Model
+# AI Brainstorming chatbot works using Gemini 1.5-flash Model
 
-add GEMINI_API_KEY & GEMINI_ENDPOINT in .env inside backend > src > .env
-
-# Steps to run 
-1. Run `npm install` in both backend and frontend directories
-2. Run `npm run dev` in both backend and frontend directores
-3. Open frontend app at http://localhost:3000
-4. Start chatting with brainstorm bot
+# Steps to run on docker
+1. Clone repo and open directory
+2. Add .env variables in backend folder and add variables for GEMINI_ENDPOINT=https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent and GEMINI_API_KEY
+3. Run `docker-compose up` in the main directory 
+4. Open frontend app at http://localhost:3000
+5. You can also Access backend APIs at http://localhost:5000
+6. Start chatting with brainstorm bot
 
    
 # Working Sample Generating brainstorm Ideas
