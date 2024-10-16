@@ -15,7 +15,6 @@ COPY . .
 
 # Expose the frontend port
 EXPOSE 3344
-RUN npm run build 
 
 # Start the frontend server
-CMD ["npm", "run", "start"]
+CMD ["npm", "run", "dev"]
