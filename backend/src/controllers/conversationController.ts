@@ -1,9 +1,17 @@
 // src/controllers/conversationController.ts
+import { v4 } from "uuid"
+import axios from 'axios';
+import dotenv from 'dotenv';
 import { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
-import dotenv from 'dotenv';
-import axios from 'axios';
-import { v4 } from "uuid"
+import { ConversationChain } from "langchain/chains";
+import { ChatOpenAI, OpenAI } from "@langchain/openai";
+import {
+    ChatPromptTemplate,
+    MessagesPlaceholder,
+} from "@langchain/core/prompts";
+import { BufferMemory, BufferWindowMemory } from "langchain/memory";
+
 
 dotenv.config();
 
@@ -14,8 +22,76 @@ interface Params {
     id: string; // The id is expected to be a string
 }
 
-// Handle new message
 export const handleNewMessage = async (req: Request, res: Response) => {
+    const { message, chatId, convId }: any = req.body;
+    let newConversation;
+    if (!message) {
+        return res.status(400).json({ error: 'Message is required' });
+    }
+
+    const chat = new OpenAI({ temperature: 0, apiKey: "API+KEY" });
+
+    // const initialPrompt = `
+    //     Include important.
+    //     Return the output as a JSON object with 'type', 'label', 'id', and 'name' for each field.
+    //     Ensure that the options for the select field are in the format:
+    //     {
+    //         {
+    //             "options": [
+    //                 {{
+    //                     "label": "Option Label",
+    //                     "value": "option_value"
+    //                 }}
+    //             ]
+    //         }}
+    //         Ensure that the format of json comes in an Fields array like this:
+    //         Ensure the form has a unique name in the form_name property
+    //         {
+    //             {
+    //                 "form_name": "Contact Form"
+    //             "fields": [
+    //                 {{
+    //                     "type": "text",
+    //                     "label": "Company Name",
+    //                     "id": "company_name",
+    //                     "name": "company_name"
+    //                 }}
+    //                 ]
+    //         }}
+    //     `
+    const fullPrompt = `
+    you are an AI is an assistant to help brainstorm multiple ideas with the user 
+    you respond in json format like this {{"conversation_type":"idea_request","ideas_category": "category name", "ideas" :["first idea", "second idea"]}}
+    Generate as many ideas as possible
+    Generate ideas related specifically to this topic
+    When asked to save an idea or ideas return with this json schema {{"conversation_type":"save_request","ideas_category": "category name", "ideas" :["first idea", "second idea"]}}
+    `
+    const chatPrompt = ChatPromptTemplate.fromMessages([
+        [
+            "system",
+            fullPrompt,
+        ],
+        new MessagesPlaceholder("history"),
+        ["human", "{input}"],
+    ]);
+
+    const chain = new ConversationChain({
+        memory: new BufferWindowMemory({ k: 1, memoryKey: "history", returnMessages: true}),
+        // memory: new BufferMemory({ returnMessages: true, memoryKey: "history" }),
+        prompt: chatPrompt,
+        llm: chat,
+    });
+
+    const response = await chain.invoke({
+        input: message,
+    });
+    console.log(response);
+    return res.json({ reply: JSON.parse(response.response), conv: {} });
+
+
+}
+// Handle new message
+export const handleNewMessageOld = async (req: Request, res: Response) => {
     const { message, chatId, convId }: any = req.body;
     let newConversation;
     if (!message) {

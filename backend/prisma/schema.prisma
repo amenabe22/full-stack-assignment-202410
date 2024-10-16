@@ -13,6 +13,7 @@ model Conversation {
   id        String   @id @default(cuid())
   messages  String
   convId  String?
+  memId String?
   isAI Boolean    @default(false)
   createdAt DateTime @default(now())
 }

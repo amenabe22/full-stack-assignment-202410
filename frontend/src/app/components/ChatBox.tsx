@@ -4,7 +4,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import axios from 'axios';
 import SendForm from './SendForm';
-import { BookmarkIcon } from '@heroicons/react/24/solid';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 interface ChatMessage {
@@ -14,8 +13,11 @@ interface ChatMessage {
     isAI: boolean
 }
 
+interface ChatBoxParams {
+    onIdeasSaved: () => void; // Assuming it's a function that gets an array of saved ideas
+}
 // eslint-disable-next-line react/display-name
-export const ChatBox = forwardRef(({ }, ref) => {
+export const ChatBox = forwardRef(({ onIdeasSaved }: ChatBoxParams, ref) => {
     // const ChatBox = (ref) => {
     const router = useRouter();
     const searchParams = useSearchParams()
@@ -30,7 +32,7 @@ export const ChatBox = forwardRef(({ }, ref) => {
             .replace(/\n/g, '<br />'); // Replace new lines with <br />
     };
 
-    const saveIdea = () => { }
+
     // expose method to parent component to set conversation from url param
     useImperativeHandle(ref, () => ({
         setConversationFromParam: (convId: string) => {
@@ -39,66 +41,35 @@ export const ChatBox = forwardRef(({ }, ref) => {
             router.replace('?convId=' + convId)
         }
     }))
-    // Function to scroll to a specific chat message
-    const scrollToMessage = (chatId: string) => {
-        const element = document.getElementById(chatId);
-        if (element) {
-            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-    };
 
     const handleSendMessage = async (message: string) => {
         // Add the user's message to the chat
-        const newUuid = uuidv4();
-        const messageObj = { message: `You: ${message}`, chatId: newUuid, convId: convId, isAI: false }
+        let memId = searchParams.get('memId')
+        if (!memId) {
+            memId = uuidv4();
+            router.replace('?memId=' + memId)
+        }
+
+        const messageObj = { message: `${message}`, chatId: memId, convId: convId, isAI: false, memoryId: memId }
         setChat([...chat, messageObj]);
-        scrollToMessage(newUuid);
 
         // Make an API call to interact with the chatbot
         try {
-            const res = await axios.post('http://127.0.0.1:5545/api/conversations/chat', messageObj);
+            const res = await axios.post('http://127.0.0.1:5545/api/conversations/chat', { message: `${message}`, chatId: "newUuid", convId: convId, isAI: false, mem_id: memId });
             const responseData = res.data
             const botReply = responseData.reply;
-            const convId = responseData.conv.convId
-            const serverMessageId = responseData.conv.id
 
-            // check if conv id param is set or not
-            const convIdParam = searchParams.get('convId')
-            if (!convIdParam) {
-                setConvId(convId)
-                router.replace('?convId=' + convId)
+            const botIdeas = botReply.ideas.join("\n")
+            if (botReply.conversation_type == "save_request") {
+                alert("Saved Ideas")
+                onIdeasSaved()
             }
+            setChat((prevChat) => [...prevChat, { message: `${botIdeas}`, chatId: "serverMessageId", isAI: true }]);
 
-            setChat((prevChat) => [...prevChat, { message: `🤖: ${botReply}`, chatId: serverMessageId, isAI: responseData.conv.isAI }]);
-            setTimeout(() => {
-                // scroll to specific message
-                scrollToMessage(serverMessageId);
-            }, 100);
         } catch (error) {
             console.error('Error talking to the chatbot:', error);
         }
     };
-
-
-    // load all current chat messages based on selected idea, when the page is loaded
-    useEffect(() => {
-        const loadChats = async () => {
-            const { data } = await axios.get(`http://127.0.0.1:5545/api/conversations/${convId}/`)
-            setChat(data.map((e) => {
-                return {
-                    message: `You: ${e.messages}`, chatId: e.id, convId: e.convId, isAI: e.isAI
-                }
-            }))
-        }
-        if (chatBoxRef.current) {
-            chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
-        }
-        const convId = searchParams.get('convId')
-        if (convId) {
-            setConvId(convId)
-        }
-        loadChats()
-    }, [convId, searchParams]);
 
 
     // reset message bod and clear current message when called
@@ -107,7 +78,9 @@ export const ChatBox = forwardRef(({ }, ref) => {
         setConvId(null)
         setChat([]);
     };
-
+    useEffect(() => {
+        handleReset()
+    }, [])
     return (<div className='md:p-5'>
         <h1 className='text-xl text-red-700 font-semibold'>🤖 Brainstorm with a Chatbot</h1>
 
@@ -117,11 +90,6 @@ export const ChatBox = forwardRef(({ }, ref) => {
                 <h3 className='pb-3'>Chat History</h3>
                 <div className='flex items-center gap-3'
                 >
-
-                    <button className='flex items-center bg-amber-100 px-2 py-1 border-[#d87708] border rounded-3xl' onClick={() => saveIdea}>
-                        <BookmarkIcon width={16} color='#d87708' />
-                        <span>Save Idea</span>
-                    </button>
                     <button className='bg-amber-100 px-2 py-1 border-[#d87708] border rounded-3xl' onClick={handleReset}>Reset Conversation</button>
 
                 </div>

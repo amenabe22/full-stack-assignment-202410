@@ -14,10 +14,8 @@ function classNames(...classes: (string | boolean | undefined | null)[]): string
 }
 
 interface Idea {
-  selected: boolean,
-  messages: string,
-  id: string,
-  convId?: string,
+  name: string,
+  id: number
 }
 
 export default function Home() {
@@ -30,25 +28,13 @@ export default function Home() {
     // Add the user's message to the chat
     // Make an API call to interact with the chatbot
     try {
-      const { data } = await axios.get('http://127.0.0.1:5545/api/conversations/unique');
+      const { data } = await axios.get('http://127.0.0.1:5545/api/conversations/ideas');
       setIdeas(data.map((e: Idea) => { return { ...e, selected: false } }))
     } catch (error) {
       console.error('Error talking to the chatbot:', error);
     }
   };
 
-  const selectIdea = (idea: Idea) => {
-    idea.selected = true
-    const updatedIdeas = ideas.map((i) => ({
-      ...i,
-      selected: i.id === idea.id ? true : false, // Set only the passed idea to selected true
-    }));
-
-    setIdeas(updatedIdeas); // Update the state with the modified list of ideas
-
-    const ideaConvId = idea.convId
-    ref.current?.setConversationFromParam(ideaConvId)
-  }
 
   useEffect(() => {
     loadIdeas()
@@ -84,20 +70,16 @@ export default function Home() {
                 <nav className="flex flex-1 flex-col">
                   <ul role="list" className="flex flex-1 flex-col gap-y-7">
                     <li>
-                      <div className="text-md font-semibold leading-6 text-gray-400">Saved Ideas</div>
+                      <div className="text-md font-semibold leading-6 text-gray-800">Saved Ideas</div>
                       <ul role="list" className="-mx-2 mt-2 space-y-1">
                         {ideas.map((idea) => (
-                          <li key={idea.messages}>
+                          <li key={idea.id}>
                             <button
-                              onClick={() => selectIdea(idea)}
                               className={classNames(
-                                idea.selected
-                                  ? 'bg-red-50 text-red-600'
-                                  : 'text-gray-700 hover:bg-red-50 hover:text-red-600',
-                                'group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 w-full',
+                                'bg-red-50 text-red-600 group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 w-full',
                               )}
                             >
-                              <span className="truncate">{idea.messages}</span>
+                              <span className="truncate">{idea.name}</span>
                             </button>
                           </li>
                         ))}
@@ -120,39 +102,21 @@ export default function Home() {
             <nav className="flex flex-1 flex-col">
               <ul role="list" className="flex flex-1 flex-col gap-y-7">
                 <li>
-                  <div className="text-md font-semibold leading-6 text-gray-400">Saved Ideas</div>
+                  <div className="text-md font-semibold leading-6 text-gray-800">Saved Ideas</div>
                   <ul role="list" className="-mx-2 mt-2 space-y-1">
                     {ideas.map((idea) => (
-                      <li key={idea.messages}>
+                      <li key={idea.id}>
                         <button
-                          onClick={() => selectIdea(idea)}
                           className={classNames(
-                            idea.selected
-                              ? 'bg-red-50 text-red-600'
-                              : 'text-gray-700 hover:bg-red-50 hover:text-red-600',
-                            'group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 w-full',
+                            'bg-red-50 text-red-600 group flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 w-full',
                           )}
                         >
-                          <span className="truncate">{idea.messages.replaceAll('"', "").replaceAll("You: ", "")}</span>
+                          <span>{idea.name}</span>
                         </button>
                       </li>
                     ))}
 
                   </ul>
-                </li>
-                <li className="-mx-6 mt-auto">
-                  <a
-                    href="#"
-                    className="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-amber-900 hover:bg-red-50"
-                  >
-                    <img
-                      alt=""
-                      src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                      className="h-8 w-8 rounded-full bg-red-50"
-                    />
-                    <span className="sr-only">Your profile</span>
-                    <span aria-hidden="true">John Doe</span>
-                  </a>
                 </li>
               </ul>
             </nav>
@@ -178,7 +142,7 @@ export default function Home() {
         <main className="py-5 md:py-10 lg:pl-72 bg-amber-50 h-screen">
           <div className="px-4 sm:px-6 lg:px-8">
             <Suspense>
-              <ChatBox ref={ref} />
+              <ChatBox onIdeasSaved={() => loadIdeas()} ref={ref} />
             </Suspense>
           </div>
         </main>

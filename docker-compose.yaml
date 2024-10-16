@@ -14,7 +14,7 @@ services:
 
   backend:
     build:
-      context: ./backend
+      context: ./flask-api
       dockerfile: Dockerfile
     ports:
       - "5545:5545"
@@ -23,5 +23,5 @@ services:
       - GEMINI_KEY=${GEMINI_KEY}
       - GEMINI_URL=${GEMINI_URL}
     volumes:
-      - ./backend:/app
+      - ./flask-api:/app
       - /app/node_modules  # Add this to avoid overwriting node_modules with the mounted volume
