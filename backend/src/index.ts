@@ -5,7 +5,7 @@ import conversationRoutes from './controllers/conversationRoutes';
 
 // basic express setup
 const app = express();
-const PORT = 5000;
+const PORT = 5545;
 
 app.use(express.json());
 // added cors to allow Cross Site Requests from frontend app

@@ -30,7 +30,7 @@ export default function Home() {
     // Add the user's message to the chat
     // Make an API call to interact with the chatbot
     try {
-      const { data } = await axios.get('http://127.0.0.1:5000/api/conversations/unique');
+      const { data } = await axios.get('http://127.0.0.1:5545/api/conversations/unique');
       setIdeas(data.map((e: Idea) => { return { ...e, selected: false } }))
     } catch (error) {
       console.error('Error talking to the chatbot:', error);

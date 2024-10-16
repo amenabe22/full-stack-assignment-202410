@@ -6,7 +6,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "3344:3344"
     environment:
       - NODE_ENV=development
     depends_on:
@@ -17,7 +17,7 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     ports:
-      - "5000:5000"
+      - "5545:5545"
     environment:
       - NODE_ENV=development
       - GEMINI_KEY=${GEMINI_KEY}

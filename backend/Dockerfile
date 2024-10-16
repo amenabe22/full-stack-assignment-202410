@@ -17,7 +17,7 @@ COPY . .
 COPY prisma ./prisma/
 
 # Expose the backend port
-EXPOSE 5000
+EXPOSE 5545
 
 # Install the correct Prisma query engine for Linux
 RUN npx prisma generate

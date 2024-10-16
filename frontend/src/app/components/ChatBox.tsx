@@ -56,7 +56,7 @@ export const ChatBox = forwardRef(({ }, ref) => {
 
         // Make an API call to interact with the chatbot
         try {
-            const res = await axios.post('http://127.0.0.1:5000/api/conversations/chat', messageObj);
+            const res = await axios.post('http://127.0.0.1:5545/api/conversations/chat', messageObj);
             const responseData = res.data
             const botReply = responseData.reply;
             const convId = responseData.conv.convId
@@ -83,7 +83,7 @@ export const ChatBox = forwardRef(({ }, ref) => {
     // load all current chat messages based on selected idea, when the page is loaded
     useEffect(() => {
         const loadChats = async () => {
-            const { data } = await axios.get(`http://127.0.0.1:5000/api/conversations/${convId}/`)
+            const { data } = await axios.get(`http://127.0.0.1:5545/api/conversations/${convId}/`)
             setChat(data.map((e) => {
                 return {
                     message: `You: ${e.messages}`, chatId: e.id, convId: e.convId, isAI: e.isAI
